@@ -77,7 +77,7 @@ int main() {
 		}
 
 		vehicles.push_back(VehicleInfo{ type, color, orien, length });
-		positions.push_back(Position{ row, col });
+		positions.push_back(Position{ row-1, col-1 });
 	}
 
 	// print out data to test
@@ -86,33 +86,34 @@ int main() {
 			<< " type=" << vehicles[i].type
 			<< " orient=" << vehicles[i].orien
 			<< " len=" << vehicles[i].length
-			<< " pos=(" << positions[i].row << "," << positions[i].col << ")\n";
+			<< " pos=(" << positions[i].row-1 << "," << positions[i].col-1 << ")\n";
 	}
 
 	// initialize board
-	int board[6][6];
+	string board[6][6]; // ! i changed the board to a string so we can assign each location the color of the car
 	for (int i = 0; i < 6; ++i) {
 		for (int j = 0; j < 6; ++j) {
-			board[i][j] = -1;
+			board[i][j] = "empty";
 		}
 	}
 
 	// fill board
 	for (int i = 0; i < numVehicle; ++i) {
-		int row = positions[i].row - 1;
-		int col = positions[i].col - 1;
+		int row = positions[i].row;
+		int col = positions[i].col;
 		int len = vehicles[i].length;
 		char ori = vehicles[i].orien;
+		string carColor = vehicles[i].color;
 
 		for (int k = 0; k < len; ++k) {
 			// horizontal
 			if (ori == 'h') {
-				board[row][col + k] = i;
+				board[row][col + k] = carColor; // location of cars and trucks in array will have their color
 			}
 
 			// vertical 
 			else{
-				board[row + k][col] = i;
+				board[row + k][col] = carColor;
 			}
 		}
 	}
