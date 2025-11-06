@@ -63,9 +63,8 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	while (valid) {
 		// ? were valid so we can increase count
 		count++;
-		
+
 		// ? move the vehicle to the direction by one
-		//newBoardState[row][col] = carNumber;
 		if (direction == 'L') {
 			newBoardState[row][col-1] = carNumber;
 			newBoardState[row][col+len-1] = -1;
@@ -89,6 +88,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			}
 		}
 		else if (direction == 'U') {
+			cout << "makes it here" << endl;
 			newBoardState[row-1][col] = carNumber;
 			newBoardState[row+len-1][col] = -1;
 			newVehicleInfo[carNumber].row = row-1;
@@ -123,16 +123,18 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	// ? sets the parent of the current board to the board it derived from
 	parent[key] = board;
 
-	if (carNumber == 0) {
+	
+	//cout << "carNumber " + to_string(carNumber) + "row: " + to_string(newVehicleInfo[carNumber].row) + " col: " + to_string(newVehicleInfo[carNumber].col) << endl;
+	//if (carNumber == 0) {
 		// ? printing board
 		cout << "-----------------------------------------------------------------" << endl;
 		for (int i=0; i<6; ++i) {
 			for (int j=0; j<6; ++j) {
-				cout << board[i][j] << "\t";
+				cout << newBoardState[i][j] << "\t";
 			}
 			cout << "\n";
 		}
-	}
+	//}
 
 	if (solutionFound) {
 		// todo: backtrack and print out the listOfMoves at each point
@@ -161,14 +163,14 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 	parent[initialBoardString] = rootBoard;
 
 	// ! this goes depth 1 of checking vehicles for their possible moves
-	while (!boardStatesQueue.empty()) {
+	while (/*!boardStatesQueue.empty()*/true) {
 		board = boardStatesQueue.front(); // ? getting the board at the front of the queue
 		key = vectorToString(board);
 		newVehicleInfo = boardInformation[key];
-		for (int i=0; i</*numOfVehicles*/2; i++) {
+		for (int i=0; i<numOfVehicles; i++) {
 			if (vehicles[i].orien == 'h') {
 				// check left
-				cout << i;
+				//cout << i;
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
 				// check right
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
@@ -182,6 +184,7 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 
 		// ? pop off the first element in the queue because we have finished that breadth level
 		boardStatesQueue.pop();
+		break;
 	}
 }
 	
