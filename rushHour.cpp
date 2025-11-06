@@ -50,7 +50,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	string key;
 	string oldKey;
 
-	cout << "row: " + to_string(row) + " col: " + to_string(col) << endl;
+	cout << "carNumber: " + to_string(carNumber) + " row: " + to_string(row) + " col: " + to_string(col) << endl;
 	if (direction == 'L') {
 		valid = checkValid(row, col-1, board);
 	} else if (direction == 'R') {
@@ -81,7 +81,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			if (valid) col = newVehicleInfo[carNumber].col;
 
 			// todo: check if the red car can get all the way to [2][5]
-			if (carNumber == 0 && newVehicleInfo[carNumber].col == 5) {
+			if (carNumber == 0 && newVehicleInfo[carNumber].col == 4) {
 				// ! this is solution, print out path
 				solutionFound = true;
 				cout << "done";
@@ -161,7 +161,9 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 	parent[initialBoardString] = rootBoard;
 
 	// ! this goes depth 1 of checking vehicles for their possible moves
+	int i = 0;
 	while (/*!boardStatesQueue.empty()*/true) {
+		i++;
 		board = boardStatesQueue.front(); // ? getting the board at the front of the queue
 		key = vectorToString(board);
 		newVehicleInfo = boardInformation[key];
@@ -181,7 +183,9 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 
 		// ? pop off the first element in the queue because we have finished that breadth level
 		boardStatesQueue.pop();
-		break;
+		if (i == 10) {
+			break;
+		}
 	}
 }
 	
