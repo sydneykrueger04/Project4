@@ -39,7 +39,7 @@ bool checkValid(int targetRow, int targetCol, vector<vector<int>>& board) {
 	return targetRow < 6 && targetRow >= 0 && targetCol < 6 && targetCol >= 0 && board[targetRow][targetCol] == -1;
 }
 
-void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, vector<VehicleInfo>& newVehicleInfo, char direction, queue<vector<vector<int>>>& boardStatesQueue, 
+void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, vector<VehicleInfo> newVehicleInfo, char direction, queue<vector<vector<int>>>& boardStatesQueue, 
 	unordered_map<string, vector<VehicleInfo>>& boardInformation, unordered_map<string, string>& listOfMoves, int carNumber, unordered_map<string, vector<vector<int>>>& parent,
 	unordered_map<string, bool>& visited) {
 	// ? if this is true we can move forward
@@ -50,6 +50,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	string key;
 	string oldKey;
 
+	cout << "row: " + to_string(row) + " col: " + to_string(col) << endl;
 	if (direction == 'L') {
 		valid = checkValid(row, col-1, board);
 	} else if (direction == 'R') {
@@ -88,7 +89,6 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			}
 		}
 		else if (direction == 'U') {
-			cout << "makes it here" << endl;
 			newBoardState[row-1][col] = carNumber;
 			newBoardState[row+len-1][col] = -1;
 			newVehicleInfo[carNumber].row = row-1;
@@ -125,16 +125,14 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 
 	
 	//cout << "carNumber " + to_string(carNumber) + "row: " + to_string(newVehicleInfo[carNumber].row) + " col: " + to_string(newVehicleInfo[carNumber].col) << endl;
-	//if (carNumber == 0) {
-		// ? printing board
-		cout << "-----------------------------------------------------------------" << endl;
-		for (int i=0; i<6; ++i) {
-			for (int j=0; j<6; ++j) {
-				cout << newBoardState[i][j] << "\t";
-			}
-			cout << "\n";
+	// ? printing board
+	cout << "-----------------------------------------------------------------" << endl;
+	for (int i=0; i<6; ++i) {
+		for (int j=0; j<6; ++j) {
+			cout << newBoardState[i][j] << "\t";
 		}
-	//}
+		cout << "\n";
+	}
 
 	if (solutionFound) {
 		// todo: backtrack and print out the listOfMoves at each point
@@ -170,7 +168,6 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 		for (int i=0; i<numOfVehicles; i++) {
 			if (vehicles[i].orien == 'h') {
 				// check left
-				//cout << i;
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
 				// check right
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
