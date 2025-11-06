@@ -41,7 +41,7 @@ bool checkValid(int targetRow, int targetCol, vector<vector<int>>& board) {
 
 void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, vector<VehicleInfo> newVehicleInfo, char direction, queue<vector<vector<int>>>& boardStatesQueue, 
 	unordered_map<string, vector<VehicleInfo>>& boardInformation, unordered_map<string, string>& listOfMoves, int carNumber, unordered_map<string, vector<vector<int>>>& parent,
-	unordered_map<string, bool>& visited) {
+	unordered_map<string, bool>& visited, vector<vector<int>> rootBoard) {
 	// ? if this is true we can move forward
 	int count = 0;
 	bool valid;
@@ -136,9 +136,21 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 
 	if (solutionFound) {
 		// todo: backtrack and print out the listOfMoves at each point
-		vector<string> printVector;
+		vector<string> printVector; // ! do we want a stack??
+		vector<vector<int>> parentBoard;
+		// todo: take our key and back track with our last moves and parent maps
+		while(parentBoard != rootBoard) {
+			string move = listOfMoves[key];
+			printVector.push_back(move);
 
-		cout << "we did itttt!" << endl;
+			parentBoard = parent[key];
+
+			cout << "we did itttt!" << endl;
+		}
+
+		for (int i=printVector.size(); i>-1; i--) {
+			// ! print backwards
+		}
 	}
 }
 
@@ -170,14 +182,14 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 		for (int i=0; i<numOfVehicles; i++) {
 			if (vehicles[i].orien == 'h') {
 				// check left
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
 				// check right
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
 			} else {
 				// check up
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'U', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'U', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
 				//check down
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'D', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'D', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
 			}
 		}
 
