@@ -71,7 +71,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			newBoardState[row][col+len-1] = -1;
 			newVehicleInfo[carNumber].col = col-1;
 			valid = checkValid(newVehicleInfo[carNumber].row, newVehicleInfo[carNumber].col-1, newBoardState);
-			if (valid) col = newVehicleInfo[carNumber].col-1;
+			if (valid) col = newVehicleInfo[carNumber].col // * added
 		}
 		else if (direction == 'R') {
 			// ! infinite loop here now
@@ -80,6 +80,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			newVehicleInfo[carNumber].col = col+1;
 			valid = checkValid(newVehicleInfo[carNumber].row, newVehicleInfo[carNumber].col+len, newBoardState);
 			// ! does this just need to be as simple as col+1? - write this out
+			if (valid) col = newVehicleInfo[carNumber].col; // * added
 
 			// todo: check if the red car can get all the way to [2][5]
 			if (carNumber == 0 && newVehicleInfo[carNumber].col == 5) {
@@ -92,6 +93,8 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			newBoardState[row+len-1][col] = -1;
 			newVehicleInfo[carNumber].row = row-1;
 			valid = checkValid(newVehicleInfo[carNumber].row-1, newVehicleInfo[carNumber].col, newBoardState);
+			// * 
+
 		}
 		else {
 			newBoardState[row+len][col] = carNumber;
