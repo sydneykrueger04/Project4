@@ -50,7 +50,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	string key;
 	string oldKey;
 
-	cout << "carNumber: " + to_string(carNumber) + " row: " + to_string(row) + " col: " + to_string(col) << endl;
+	// cout << "carNumber: " + to_string(carNumber) + " row: " + to_string(row) + " col: " + to_string(col) << endl;
 	if (direction == 'L') {
 		valid = checkValid(row, col-1, board);
 	} else if (direction == 'R') {
@@ -126,15 +126,16 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	
 	//cout << "carNumber " + to_string(carNumber) + "row: " + to_string(newVehicleInfo[carNumber].row) + " col: " + to_string(newVehicleInfo[carNumber].col) << endl;
 	// ? printing board
-	cout << "-----------------------------------------------------------------" << endl;
+	/*cout << "-----------------------------------------------------------------" << endl;
 	for (int i=0; i<6; ++i) {
 		for (int j=0; j<6; ++j) {
 			cout << newBoardState[i][j] << "\t";
 		}
 		cout << "\n";
-	}
+	}*/
 
 	if (solutionFound) {
+		cout << "we did itttt!" << endl;
 		// todo: backtrack and print out the listOfMoves at each point
 		vector<string> printVector; // ! do we want a stack??
 		vector<vector<int>> parentBoard;
@@ -142,13 +143,13 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 		while(parentBoard != rootBoard) {
 			string move = listOfMoves[key];
 			printVector.push_back(move);
-
+			key = vectorToString(parent[key]); // added
 			parentBoard = parent[key];
-
-			cout << "we did itttt!" << endl;
 		}
 
 		for (int i=printVector.size(); i>-1; i--) {
+			cout << printVector[i] << endl; // not correct yet
+			
 			// ! print backwards
 		}
 	}
