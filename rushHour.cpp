@@ -41,7 +41,7 @@ bool checkValid(int targetRow, int targetCol, vector<vector<int>>& board) {
 
 void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, vector<VehicleInfo> newVehicleInfo, char direction, queue<vector<vector<int>>>& boardStatesQueue, 
 	unordered_map<string, vector<VehicleInfo>>& boardInformation, unordered_map<string, string>& listOfMoves, int carNumber, unordered_map<string, vector<vector<int>>>& parent,
-	unordered_map<string, bool>& visited, vector<vector<int>> rootBoard) {
+	unordered_map<string, bool>& visited, vector<vector<int>> rootBoard, bool& problemSolved) {
 	// ? if this is true we can move forward
 	int count = 0;
 	bool valid;
@@ -50,7 +50,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	string key;
 	string oldKey;
 
-	cout << "carNumber: " + to_string(carNumber) + " row: " + to_string(row) + " col: " + to_string(col) << endl;
+	// ! cout << "carNumber: " + to_string(carNumber) + " row: " + to_string(row) + " col: " + to_string(col) << endl;
 	if (direction == 'L') {
 		valid = checkValid(row, col-1, board);
 	} else if (direction == 'R') {
@@ -84,7 +84,6 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			if (carNumber == 0 && newVehicleInfo[carNumber].col == 4) {
 				// ! this is solution, print out path
 				solutionFound = true;
-				cout << "done";
 				break;
 			}
 		}
@@ -126,30 +125,38 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	
 	//cout << "carNumber " + to_string(carNumber) + "row: " + to_string(newVehicleInfo[carNumber].row) + " col: " + to_string(newVehicleInfo[carNumber].col) << endl;
 	// ? printing board
-	cout << "-----------------------------------------------------------------" << endl;
+	/*cout << "-----------------------------------------------------------------" << endl;
 	for (int i=0; i<6; ++i) {
 		for (int j=0; j<6; ++j) {
 			cout << newBoardState[i][j] << "\t";
 		}
 		cout << "\n";
-	}
+	}*/
 
 	if (solutionFound) {
 		// todo: backtrack and print out the listOfMoves at each point
-		vector<string> printVector; // ! do we want a stack??
-		vector<vector<int>> parentBoard;
+		problemSolved = true;
+		vector<string> printVector;
+		vector<vector<int>> parentBoard = parent[key];
 		// todo: take our key and back track with our last moves and parent maps
 		while(parentBoard != rootBoard) {
 			string move = listOfMoves[key];
 			printVector.push_back(move);
-
+			
 			parentBoard = parent[key];
-
-			cout << "we did itttt!" << endl;
+			key = vectorToString(parentBoard);
+			/*cout << "--------------------------------------------" << endl;
+			for (int i=0; i<6; ++i) {
+				for (int j=0; j<6; ++j) {
+					cout << parentBoard[i][j] << "\t";
+				}
+				cout << "\n";
+			}*/
 		}
 
-		for (int i=printVector.size(); i>-1; i--) {
-			// ! print backwards
+		cout << printVector.size()-1 << " moves:" << endl;
+		for (int i=printVector.size()-2; i>=0; i--) {
+			cout << printVector[i] << endl;
 		}
 	}
 }
@@ -165,6 +172,7 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 	vector<vector<int>> newBoardState;
 	unordered_map<string, vector<vector<int>>> parent; // ? this will allow us to assign parents to then have us backtrack at the end
 	unordered_map<string, bool> visited;
+	bool problemSolved = false;
 
 	boardStatesQueue.push(board); // ? this will be the first board
 	string initialBoardString = vectorToString(board);
@@ -174,7 +182,7 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 
 	// ! this goes depth 1 of checking vehicles for their possible moves
 	int i = 0;
-	while (/*!boardStatesQueue.empty()*/true) {
+	while (!boardStatesQueue.empty()) {
 		i++;
 		board = boardStatesQueue.front(); // ? getting the board at the front of the queue
 		key = vectorToString(board);
@@ -182,22 +190,22 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 		for (int i=0; i<numOfVehicles; i++) {
 			if (vehicles[i].orien == 'h') {
 				// check left
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 				// check right
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
+				if (problemSolved) {
+					return;
+				}
 			} else {
 				// check up
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'U', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'U', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 				//check down
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'D', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'D', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 			}
 		}
 
 		// ? pop off the first element in the queue because we have finished that breadth level
 		boardStatesQueue.pop();
-		if (i == 10) {
-			break;
-		}
 	}
 }
 	
@@ -206,7 +214,6 @@ int main() {
 	cin >> numVehicle;
 	unordered_map<string, ItemProperties> itemTable;
 	vector<VehicleInfo> vehicles;
-	//vector<Position> positions;
 
 	for (int i = 0; i < numVehicle; ++i) {
 		string type, color;
@@ -226,7 +233,6 @@ int main() {
 		}
 
 		vehicles.push_back(VehicleInfo{ type, color, orien, length, row-1, col-1 });
-		/*positions.push_back(Position{ row-1, col-1 });*/
 	}
 
 	// print out data to test
@@ -256,7 +262,7 @@ int main() {
 		for (int k = 0; k < len; ++k) {
 			// horizontal
 			if (ori == 'h') {
-				board[row][col + k] = i; // location of cars and trucks in array will have their color
+				board[row][col + k] = i;
 			}
 
 			// vertical 
