@@ -147,7 +147,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			parentBoard = parent[key];
 		}
 
-		for (int i=printVector.size(); i>-1; i--) {
+		for (int i=printVector.size()-2; i>-1; i--) {
 			cout << printVector[i] << endl; // not correct yet
 			
 			// ! print backwards
