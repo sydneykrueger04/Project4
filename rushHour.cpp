@@ -143,7 +143,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 		while(parentBoard != rootBoard) {
 			string move = listOfMoves[key];
 			printVector.push_back(move);
-			key = vectorToString(parent[key]); // added
+			key = vectorToString(parent[key]); // added editsss
 			parentBoard = parent[key];
 		}
 
