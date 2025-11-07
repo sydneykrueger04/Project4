@@ -143,30 +143,29 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 		vector<string> printVector;
 		vector<vector<int>> parentBoard = parent[key];
 		// todo: take our key and back track with our last moves and parent maps
-		int i = 0;
 		while(parentBoard != rootBoard) {
-			i++;
 			string move = listOfMoves[key];
 			printVector.push_back(move);
-			cout << move;
+			//cout << move;
 			parentBoard = parent[key];
 			key = vectorToString(parentBoard);
-			cout << "--------------------------------------------" << endl;
+			/*cout << "--------------------------------------------" << endl;
 			for (int i=0; i<6; ++i) {
 				for (int j=0; j<6; ++j) {
 					cout << parentBoard[i][j] << "\t";
 				}
 				cout << "\n";
-			}
-			/*if (i == 7) {
-				break;
 			}*/
 		}
 
-		cout << printVector.size()-1 << " moves:" << endl;
-		for (int i=printVector.size()-2; i>=0; i--) {
-			cout << printVector[i] << endl;
+		if (printVector.size()-1 == 1) {
+			cout << "1 move" << endl;
+		} else {
+			cout << printVector.size()-1 << " moves" << endl;
 		}
+		/*for (int i=printVector.size()-2; i>=0; i--) {
+			cout << printVector[i] << endl;
+		}*/
 	}
 }
 
@@ -244,13 +243,13 @@ int main() {
 	}
 
 	// print out data to test
-	for (size_t i = 0; i < vehicles.size(); ++i) {
+	/*for (size_t i = 0; i < vehicles.size(); ++i) {
 		cout << i << ") color=" << vehicles[i].color
 			<< " type=" << vehicles[i].type
 			<< " orient=" << vehicles[i].orien
 			<< " len=" << vehicles[i].length
 			<< " pos=(" << vehicles[i].row << "," << vehicles[i].col << ")\n";
-	}
+	}*/
 
 	// initialize board
 	vector<vector<int>> board(6, vector<int>(6, 0));
@@ -281,12 +280,12 @@ int main() {
 	}
 
 	// ? printing board
-	for (int i=0; i<6; ++i) {
+	/*for (int i=0; i<6; ++i) {
 		for (int j=0; j<6; ++j) {
 			cout << board[i][j] << "\t";
 		}
 		cout << "\n";
-	}
+	}*/
 
 	// call the solve function
 	puzzleSolve(numVehicle, vehicles, board);
