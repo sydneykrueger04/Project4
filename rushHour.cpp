@@ -79,14 +79,6 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			newVehicleInfo[carNumber].col = col+1;
 			valid = checkValid(newVehicleInfo[carNumber].row, newVehicleInfo[carNumber].col+len, newBoardState);
 			if (valid) col = newVehicleInfo[carNumber].col;
-
-			// todo: check if the red car can get all the way to [2][5]
-			if (carNumber == 0 && newVehicleInfo[carNumber].col == 4) {
-				// ! this is solution, print out path
-				solutionFound = true;
-				cout << "done";
-				break;
-			}
 		}
 		else if (direction == 'U') {
 			newBoardState[row-1][col] = carNumber;
@@ -106,22 +98,32 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 
 		// ? convert the 2d vector to a string to use as a key
 		key = vectorToString(newBoardState);
+		// todo: check if the red car can get all the way to [2][5]
+		if (carNumber == 0 && newVehicleInfo[carNumber].col == 4) {
+			// ! this is solution, print out path
+			solutionFound = true;
+			// cout << "done";
+			break;
+		}
 	}
 
 	// ? assign the vehicle info to this state to the string of this state in a hash map
-	boardInformation[key] = newVehicleInfo;
+
 
 	// ? assign the move you made here in relation to this new state
-	listOfMoves[key] = newVehicleInfo[carNumber].color + " " + to_string(count) + " " + direction;
+	
 
 	// ? push new state onto the queue
 	if (visited[key] == false) {
 		boardStatesQueue.push(newBoardState);
 		visited[key] = true;
+		boardInformation[key] = newVehicleInfo;
+		listOfMoves[key] = newVehicleInfo[carNumber].color + " " + to_string(count) + " " + direction;
+		parent[key] = board;
 	}
 
 	// ? sets the parent of the current board to the board it derived from
-	parent[key] = board;
+	
 
 	
 	//cout << "carNumber " + to_string(carNumber) + "row: " + to_string(newVehicleInfo[carNumber].row) + " col: " + to_string(newVehicleInfo[carNumber].col) << endl;
@@ -155,10 +157,17 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			}*/
 		} // adding this comment to have something to commit
 
-		cout << printVector.size()-1 << " moves:" << endl;
-		for (int i=printVector.size()-2; i>=0; i--) {
-			cout << printVector[i] << endl;
+		if (printVector.size() > 1) {
+			cout << printVector.size()-1 << " moves" << endl;
 		}
+		else {
+			cout <<  "1 move" << endl;
+		}
+		
+
+		/*for (int i=printVector.size()-2; i>=0; i--) {
+			cout << printVector[i] << endl;
+		}*/
 	}
 }
 
@@ -176,6 +185,7 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 
 	boardStatesQueue.push(board); // ? this will be the first board
 	string initialBoardString = vectorToString(board);
+	visited[initialBoardString] = true;
 	boardInformation[initialBoardString] = vehicles;
 	vector<vector<int>> rootBoard(6, vector<int>(6, 0));
 	parent[initialBoardString] = rootBoard;
@@ -183,7 +193,7 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 
 	// ! this goes depth 1 of checking vehicles for their possible moves
 	int i = 0;
-	while (/*!boardStatesQueue.empty()*/true) {
+	while (!boardStatesQueue.empty()) {
 		i++;
 		board = boardStatesQueue.front(); // ? getting the board at the front of the queue
 		key = vectorToString(board);
@@ -194,6 +204,9 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 				// check right
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
+				if (problemSolved) {
+					return;
+				}
 			} else {
 				// check up
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'U', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
@@ -201,12 +214,8 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'D', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 			}
 		}
-
 		// ? pop off the first element in the queue because we have finished that breadth level
 		boardStatesQueue.pop();
-		if (i == 10) {
-			break;
-		}
 	}
 }
 	
@@ -239,13 +248,13 @@ int main() {
 	}
 
 	// print out data to test
-	for (size_t i = 0; i < vehicles.size(); ++i) {
+	/*for (size_t i = 0; i < vehicles.size(); ++i) {
 		cout << i << ") color=" << vehicles[i].color
 			<< " type=" << vehicles[i].type
 			<< " orient=" << vehicles[i].orien
 			<< " len=" << vehicles[i].length
 			<< " pos=(" << vehicles[i].row << "," << vehicles[i].col << ")\n";
-	}
+	}*/
 
 	// initialize board
 	vector<vector<int>> board(6, vector<int>(6, 0));
@@ -276,12 +285,12 @@ int main() {
 	}
 
 	// ? printing board
-	for (int i=0; i<6; ++i) {
+	/*for (int i=0; i<6; ++i) {
 		for (int j=0; j<6; ++j) {
 			cout << board[i][j] << "\t";
 		}
 		cout << "\n";
-	}
+	}*/
 
 	// call the solve function
 	puzzleSolve(numVehicle, vehicles, board);
