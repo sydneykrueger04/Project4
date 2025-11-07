@@ -157,7 +157,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			}*/
 		} // adding this comment to have something to commit
 
-		if (printVector.size() > 1) {
+		if (printVector.size()-1 > 1) {
 			cout << printVector.size()-1 << " moves" << endl;
 		}
 		else {
