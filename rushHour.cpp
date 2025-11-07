@@ -41,7 +41,7 @@ bool checkValid(int targetRow, int targetCol, vector<vector<int>>& board) {
 
 void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, vector<VehicleInfo> newVehicleInfo, char direction, queue<vector<vector<int>>>& boardStatesQueue, 
 	unordered_map<string, vector<VehicleInfo>>& boardInformation, unordered_map<string, string>& listOfMoves, int carNumber, unordered_map<string, vector<vector<int>>>& parent,
-	unordered_map<string, bool>& visited, vector<vector<int>> rootBoard) {
+	unordered_map<string, bool>& visited, vector<vector<int>> rootBoard, bool& problemSolved) {
 	// ? if this is true we can move forward
 	int count = 0;
 	bool valid;
@@ -135,22 +135,29 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	}*/
 
 	if (solutionFound) {
-		cout << "we did itttt!" << endl;
 		// todo: backtrack and print out the listOfMoves at each point
-		vector<string> printVector; // ! do we want a stack??
-		vector<vector<int>> parentBoard;
+		problemSolved = true;
+		vector<string> printVector;
+		vector<vector<int>> parentBoard = parent[key];
 		// todo: take our key and back track with our last moves and parent maps
 		while(parentBoard != rootBoard) {
 			string move = listOfMoves[key];
 			printVector.push_back(move);
-			key = vectorToString(parent[key]); // added editsss
-			parentBoard = parent[key];
-		}
-
-		for (int i=printVector.size(); i>-1; i--) {
-			cout << printVector[i] << endl; // not correct yet
 			
-			// ! print backwards
+			parentBoard = parent[key];
+			key = vectorToString(parentBoard);
+			/*cout << "--------------------------------------------" << endl;
+			for (int i=0; i<6; ++i) {
+				for (int j=0; j<6; ++j) {
+					cout << parentBoard[i][j] << "\t";
+				}
+				cout << "\n";
+			}*/
+		} // adding this comment to have something to commit
+
+		cout << printVector.size()-1 << " moves:" << endl;
+		for (int i=printVector.size()-2; i>=0; i--) {
+			cout << printVector[i] << endl;
 		}
 	}
 }
@@ -172,6 +179,7 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 	boardInformation[initialBoardString] = vehicles;
 	vector<vector<int>> rootBoard(6, vector<int>(6, 0));
 	parent[initialBoardString] = rootBoard;
+	bool problemSolved = false;
 
 	// ! this goes depth 1 of checking vehicles for their possible moves
 	int i = 0;
@@ -183,14 +191,14 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 		for (int i=0; i<numOfVehicles; i++) {
 			if (vehicles[i].orien == 'h') {
 				// check left
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'L', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 				// check right
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'R', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 			} else {
 				// check up
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'U', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'U', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 				//check down
-				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'D', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard);
+				checkPossibleMoves(board, newVehicleInfo[i].row, newVehicleInfo[i].col, newVehicleInfo[i].length, newVehicleInfo, 'D', boardStatesQueue, boardInformation, listOfMoves, i, parent, visited, rootBoard, problemSolved);
 			}
 		}
 
