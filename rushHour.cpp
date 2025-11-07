@@ -232,7 +232,7 @@ int main() {
 		}
 		else {
 			length = 3;
-		}
+		} // comment
 
 		vehicles.push_back(VehicleInfo{ type, color, orien, length, row-1, col-1 });
 	}
