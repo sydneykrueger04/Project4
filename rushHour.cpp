@@ -84,6 +84,7 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 			if (carNumber == 0 && newVehicleInfo[carNumber].col == 4) {
 				// ! this is solution, print out path
 				solutionFound = true;
+				key = vectorToString(newBoardState); // ? this doesnt get set if we dont finish the loop
 				break;
 			}
 		}
@@ -108,19 +109,22 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 	}
 
 	// ? assign the vehicle info to this state to the string of this state in a hash map
-	boardInformation[key] = newVehicleInfo;
+	//boardInformation[key] = newVehicleInfo;
 
 	// ? assign the move you made here in relation to this new state
-	listOfMoves[key] = newVehicleInfo[carNumber].color + " " + to_string(count) + " " + direction;
+	//listOfMoves[key] = newVehicleInfo[carNumber].color + " " + to_string(count) + " " + direction;
 
 	// ? push new state onto the queue
 	if (visited[key] == false) {
 		boardStatesQueue.push(newBoardState);
+		boardInformation[key] = newVehicleInfo;
+		listOfMoves[key] = newVehicleInfo[carNumber].color + " " + to_string(count) + " " + direction;
+		parent[key] = board;
 		visited[key] = true;
 	}
 
 	// ? sets the parent of the current board to the board it derived from
-	parent[key] = board;
+	//parent[key] = board;
 
 	
 	//cout << "carNumber " + to_string(carNumber) + "row: " + to_string(newVehicleInfo[carNumber].row) + " col: " + to_string(newVehicleInfo[carNumber].col) << endl;
@@ -139,20 +143,25 @@ void checkPossibleMoves(vector<vector<int>>& board, int row, int col, int len, v
 		vector<string> printVector;
 		vector<vector<int>> parentBoard = parent[key];
 		// todo: take our key and back track with our last moves and parent maps
+		int i = 0;
 		while(parentBoard != rootBoard) {
+			i++;
 			string move = listOfMoves[key];
 			printVector.push_back(move);
-			
+			cout << move;
 			parentBoard = parent[key];
 			key = vectorToString(parentBoard);
-			/*cout << "--------------------------------------------" << endl;
+			cout << "--------------------------------------------" << endl;
 			for (int i=0; i<6; ++i) {
 				for (int j=0; j<6; ++j) {
 					cout << parentBoard[i][j] << "\t";
 				}
 				cout << "\n";
+			}
+			/*if (i == 7) {
+				break;
 			}*/
-		} // adding this comment to have something to commit
+		}
 
 		cout << printVector.size()-1 << " moves:" << endl;
 		for (int i=printVector.size()-2; i>=0; i--) {
@@ -176,14 +185,13 @@ void puzzleSolve(int numOfVehicles, const vector<VehicleInfo>& vehicles, vector<
 
 	boardStatesQueue.push(board); // ? this will be the first board
 	string initialBoardString = vectorToString(board);
+	visited[initialBoardString] = true;
 	boardInformation[initialBoardString] = vehicles;
 	vector<vector<int>> rootBoard(6, vector<int>(6, 0));
 	parent[initialBoardString] = rootBoard;
 
 	// ! this goes depth 1 of checking vehicles for their possible moves
-	int i = 0;
 	while (!boardStatesQueue.empty()) {
-		i++;
 		board = boardStatesQueue.front(); // ? getting the board at the front of the queue
 		key = vectorToString(board);
 		newVehicleInfo = boardInformation[key];
